@@ -1,4 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolveOrderStoreConfig } from "@/lib/order-store-config.mjs";
+
+export { OrderStoreConfigurationError } from "@/lib/order-store-config.mjs";
 
 export type StoredOrder = {
   id: string;
@@ -33,22 +36,10 @@ export type OrderUpdate = Partial<Pick<StoredOrder,
 
 let supabaseClient: SupabaseClient | undefined;
 
-function hasSupabaseConfig() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (Boolean(url) !== Boolean(key)) {
-    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be configured together.");
-  }
-  return Boolean(url && key);
-}
-
-async function getSupabase() {
+async function getSupabase(config: { url: string; key: string }) {
   if (supabaseClient) return supabaseClient;
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("Supabase server credentials are not configured.");
   const { createClient } = await import("@supabase/supabase-js");
-  supabaseClient = createClient(url, key, {
+  supabaseClient = createClient(config.url, config.key, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   return supabaseClient;
@@ -127,8 +118,9 @@ async function getD1Context() {
 }
 
 export async function findOrderByIdempotencyKey(idempotencyKey: string) {
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     const { data, error } = await client.from("orders").select("*").eq("idempotency_key", idempotencyKey).maybeSingle();
     if (error) throw error;
     return data ? mapSupabaseOrder(data) : undefined;
@@ -138,8 +130,9 @@ export async function findOrderByIdempotencyKey(idempotencyKey: string) {
 }
 
 export async function createOrderRecord(order: NewOrderRecord) {
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     const { error } = await client.from("orders").insert(toSupabaseInsert(order));
     if (error) throw error;
     return;
@@ -149,8 +142,9 @@ export async function createOrderRecord(order: NewOrderRecord) {
 }
 
 export async function listOrders() {
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     const { data, error } = await client.from("orders").select("*").order("created_at", { ascending: false });
     if (error) throw error;
     return (data ?? []).map(mapSupabaseOrder);
@@ -160,8 +154,9 @@ export async function listOrders() {
 }
 
 export async function updateOrderById(id: string, update: OrderUpdate) {
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     const { data, error } = await client.from("orders").update(toSupabaseUpdate(update)).eq("id", id).select("*").maybeSingle();
     if (error) throw error;
     return data ? mapSupabaseOrder(data) : undefined;
@@ -172,8 +167,9 @@ export async function updateOrderById(id: string, update: OrderUpdate) {
 }
 
 export async function listOrdersForExport(ids: string[]) {
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     let query = client.from("orders").select("*");
     query = ids.length ? query.in("id", ids) : query.eq("exported", false);
     const { data, error } = await query;
@@ -189,8 +185,9 @@ export async function listOrdersForExport(ids: string[]) {
 export async function markOrdersExported(ids: string[]) {
   if (!ids.length) return;
   const updatedAt = new Date().toISOString();
-  if (hasSupabaseConfig()) {
-    const client = await getSupabase();
+  const config = resolveOrderStoreConfig();
+  if (config.backend === "supabase") {
+    const client = await getSupabase(config);
     const { error } = await client.from("orders").update({ exported: true, updated_at: updatedAt }).in("id", ids);
     if (error) throw error;
     return;
