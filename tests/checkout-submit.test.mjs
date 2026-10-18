@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createClient } from "@supabase/supabase-js";
 import {
   createIdempotencyKey,
   createOrderEndpoint,
@@ -53,6 +54,55 @@ test("Supabase URL must be an HTTP API URL and values are trimmed", () => {
     resolveOrderStoreConfig({ VERCEL: "1", SUPABASE_URL: " https://project.supabase.co/ ", SUPABASE_SERVICE_ROLE_KEY: " secret " }),
     { backend: "supabase", url: "https://project.supabase.co", key: "secret" },
   );
+});
+
+test("Supabase REST endpoint is normalized to the project base URL", () => {
+  assert.deepEqual(
+    resolveOrderStoreConfig({
+      VERCEL: "1",
+      SUPABASE_URL: "https://project.supabase.co/rest/v1/",
+      SUPABASE_SERVICE_ROLE_KEY: "secret",
+    }),
+    { backend: "supabase", url: "https://project.supabase.co", key: "secret" },
+  );
+});
+
+test("Supabase SDK builds the orders request with one REST path", async () => {
+  let requestedUrl;
+  const config = resolveOrderStoreConfig({
+    VERCEL: "1",
+    SUPABASE_URL: "https://project.supabase.co/rest/v1",
+    SUPABASE_SERVICE_ROLE_KEY: "test-service-key",
+  });
+  const client = createClient(config.url, config.key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: {
+      fetch: async (input) => {
+        requestedUrl = input instanceof Request ? input.url : String(input);
+        return new Response("[]", { status: 200, headers: { "Content-Type": "application/json" } });
+      },
+    },
+  });
+
+  const { error } = await client.from("orders").select("*").limit(1);
+
+  assert.equal(error, null);
+  assert.equal(new URL(requestedUrl).pathname, "/rest/v1/orders");
+});
+
+test("Supabase URL rejects paths and URL metadata that create invalid API requests", () => {
+  for (const url of [
+    "https://project.supabase.co/project/settings",
+    "https://project.supabase.co?key=secret",
+    "https://project.supabase.co/#fragment",
+    "https://user:password@project.supabase.co",
+  ]) {
+    assert.throws(
+      () => resolveOrderStoreConfig({ VERCEL: "1", SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: "secret" }),
+      (error) => error instanceof OrderStoreConfigurationError &&
+        ["SUPABASE_URL_INVALID", "SUPABASE_URL_INVALID_PATH"].includes(error.code),
+    );
+  }
 });
 
 test("Cloudflare builds retain the D1 fallback", () => {

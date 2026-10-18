@@ -14,13 +14,30 @@ function safeErrorCode(error: unknown) {
   return /^[A-Z0-9_-]{2,40}$/i.test(code) ? code : undefined;
 }
 
+function safeErrorType(error: unknown) {
+  if (error instanceof Error) return error.name;
+  const code = safeErrorCode(error);
+  if (code?.startsWith("PGRST")) return "PostgrestError";
+  if (!error || typeof error !== "object" || !("name" in error)) return "UnknownError";
+  const name = String(error.name);
+  return /^[A-Za-z][A-Za-z0-9_-]{1,39}$/.test(name) ? name : "UnknownError";
+}
+
+function safeErrorHint(error: unknown) {
+  if (safeErrorCode(error) === "PGRST125") {
+    return "Invalid PostgREST path. SUPABASE_URL must be the project base URL without /rest/v1.";
+  }
+  return undefined;
+}
+
 function orderFailure(error: unknown, reference: string, stage: string) {
   const configurationError = error instanceof Error && error.name === "OrderStoreConfigurationError";
   console.error("Order submission failed", {
     reference,
     stage,
-    type: error instanceof Error ? error.name : "UnknownError",
+    type: safeErrorType(error),
     code: safeErrorCode(error),
+    hint: safeErrorHint(error),
   });
   return NextResponse.json(
     {
