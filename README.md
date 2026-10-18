@@ -21,7 +21,9 @@ npm run build
 npm run dev
 ```
 
-صفحة المتجر `/` ولوحة الإدارة `/admin`. المعاينة المحلية تحاكي تسجيل الدخول عبر `/signin-with-chatgpt?return_to=/admin`.
+صفحة المتجر `/` ولوحة الإدارة `/admin`. على Vercel تظهر صفحة الدخول في `/admin/login`
+وتستخدم `ADMIN_EMAILS` و`ADMIN_PASSWORD` من متغيرات البيئة. المعاينة المحلية على
+OpenAI Sites تحاكي تسجيل الدخول عبر `/signin-with-chatgpt?return_to=/admin`.
 
 ## قاعدة البيانات
 
