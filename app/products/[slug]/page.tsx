@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!product) return {};
   return {
     title: `${product.name} | DRIP EGYPT`,
-    description: `${product.description} السعر 1,499 جنيه والتوصيل لكل محافظات مصر.`,
+    description: `${product.description} السعر 1,499 ج.م والتوصيل لكل محافظات مصر.`,
     openGraph: { locale: "ar_EG", title: `${product.name} | DRIP EGYPT`, description: product.description, images: [product.images[0]] },
   };
 }

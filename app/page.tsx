@@ -7,12 +7,12 @@ export default function Home() {
     <main className="catalog-home">
       <section className="shell catalog-section" id="products">
         <header className="catalog-intro">
-          <p className="catalog-brand">DRIP EGYPT</p>
+          <p className="catalog-brand">DRIP EGYPT · BEST SELLERS</p>
           <h1>الأكثر مبيعاً</h1>
           <p>اختار موديلك ومقاسك، وادفع عند الاستلام</p>
           <div className="catalog-note">
             <PackageCheck size={18} aria-hidden="true" />
-            <span>شحن ثابت 100 جنيه لكل الطلب</span>
+            <span>شحن ثابت 100 ج.م لكل الطلب</span>
           </div>
         </header>
 

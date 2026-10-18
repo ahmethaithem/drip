@@ -18,7 +18,7 @@ export const PRODUCTS: Product[] = [
     slug: "ferrari-black",
     name: "جاكيت فراري أسود",
     color: "أسود",
-    gender: "رجالي ونسائي",
+    gender: "UNISEX",
     priceEGP: 1499,
     description:
       "جاكيت مبطن بتصميم رياضي عصري، مناسب للرجال والنساء وللإطلالات اليومية خلال فصل الشتاء. خامة مريحة وتشطيب عالي الجودة.",
@@ -35,7 +35,7 @@ export const PRODUCTS: Product[] = [
     slug: "bmw",
     name: "جاكيت BMW",
     color: "كحلي",
-    gender: "رجالي ونسائي",
+    gender: "UNISEX",
     priceEGP: 1499,
     description:
       "جاكيت مبطن بطابع سباق جريء وقَصّة مريحة، مناسب للرجال والنساء وللاستخدام اليومي في الشتاء. تفاصيل واضحة وتشطيب أنيق.",
@@ -54,7 +54,7 @@ export const PRODUCTS: Product[] = [
     slug: "ferrari-pink",
     name: "جاكيت فراري وردي",
     color: "وردي",
-    gender: "رجالي ونسائي",
+    gender: "UNISEX",
     priceEGP: 1499,
     description:
       "جاكيت مبطن بلون وردي لافت وتصميم رياضي عصري، مناسب للرجال والنساء ولإطلالة شتوية مختلفة. مريح وسهل التنسيق.",

@@ -80,7 +80,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
           <div className="product-trust">
             <div><Banknote /><span>الدفع عند الاستلام</span></div>
             <div><MapPin /><span>توصيل لجميع محافظات مصر</span></div>
-            <div><PackageCheck /><span>مصاريف الشحن 100 جنيه للطلب</span></div>
+            <div><PackageCheck /><span>مصاريف الشحن 100 ج.م للطلب</span></div>
           </div>
         </div>
       </div>
