@@ -7,7 +7,11 @@ import { formatEGP } from "@/lib/commerce.mjs";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">
-      <Link href={`/products/${product.slug}`} className="product-image-wrap" aria-label={`عرض ${product.name}`}>
+      <Link
+        href={`/products/${product.slug}`}
+        className="product-image-wrap"
+        aria-label={`عرض ${product.name}`}
+      >
         <Image
           src={product.images[0]}
           alt={product.name}
@@ -17,12 +21,18 @@ export function ProductCard({ product }: { product: Product }) {
         />
       </Link>
       <div className="product-card-body">
-        <p className="eyebrow">{product.gender}</p>
-        <h3><Link href={`/products/${product.slug}`}>{product.name}</Link></h3>
+        <h2>
+          <Link href={`/products/${product.slug}`}>{product.name}</Link>
+          <span>({product.gender})</span>
+        </h2>
         <div className="product-card-foot">
           <strong>{formatEGP(product.priceEGP)}</strong>
-          <Link href={`/products/${product.slug}`} className="text-link">
-            عرض التفاصيل <ArrowLeft size={17} aria-hidden="true" />
+          <Link
+            href={`/products/${product.slug}`}
+            className="product-open"
+            aria-label={`اختار ${product.name}`}
+          >
+            <ArrowLeft size={19} aria-hidden="true" />
           </Link>
         </div>
       </div>

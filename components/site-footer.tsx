@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="shell footer-inner">
         <div>
           <div className="brand brand-light">DRIP <span>EGYPT</span></div>
-          <p>ستايل شارع مصري بثقة وحضور.</p>
+          <p>الدفع عند الاستلام · توصيل لكل محافظات مصر</p>
         </div>
         <div className="footer-links">
           <Link href="/#products">المنتجات</Link>
