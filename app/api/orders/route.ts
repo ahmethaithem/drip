@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
-import { getDb } from "@/db";
-import { orders } from "@/db/schema";
+import { createOrderRecord, findOrderByIdempotencyKey } from "@/db/order-store";
 import { createOrderSchema } from "@/lib/order-validation";
 import { EGYPT_GOVERNORATES } from "@/lib/governorates";
 import { getProduct } from "@/lib/products";
@@ -28,18 +26,17 @@ export async function POST(request: Request) {
     safeItems.push({ productId: product.id, name: product.name, size: item.size, color: product.color, quantity: item.quantity, unitPriceEGP: product.priceEGP, lineTotalEGP: product.priceEGP * item.quantity, image: product.images[0] });
   }
   const totals = calculateTotals(safeItems);
-  const db = getDb();
-  const existing = await db.select().from(orders).where(eq(orders.idempotencyKey, idempotencyKey)).get();
+  const existing = await findOrderByIdempotencyKey(idempotencyKey);
   if (existing) return NextResponse.json({ orderNumber: existing.orderNumber, codAmountEGP: existing.codAmountEGP, duplicate: true });
   const id = crypto.randomUUID();
   const number = makeOrderNumber();
   try {
-    await db.insert(orders).values({ id, orderNumber: number, idempotencyKey, customerName: customer.fullName, primaryPhone, secondaryPhone,
+    await createOrderRecord({ id, orderNumber: number, idempotencyKey, customerName: customer.fullName, primaryPhone, secondaryPhone,
       governorate: customer.governorate, city: customer.city, address: customer.address,
       buildingNumber: customer.buildingNumber || null, floorApartment: customer.floorApartment || null, landmark: customer.landmark || null, notes: customer.notes || null,
       itemsJson: JSON.stringify(safeItems), subtotalEGP: totals.subtotalEGP, shippingFeeEGP: totals.shippingFeeEGP, codAmountEGP: totals.codAmountEGP });
   } catch (error) {
-    const duplicate = await db.select().from(orders).where(eq(orders.idempotencyKey, idempotencyKey)).get();
+    const duplicate = await findOrderByIdempotencyKey(idempotencyKey);
     if (duplicate) return NextResponse.json({ orderNumber: duplicate.orderNumber, codAmountEGP: duplicate.codAmountEGP, duplicate: true });
     console.error("Order insert failed", error);
     return NextResponse.json({ error: "تعذر حفظ الطلب حالياً. حاول مرة أخرى." }, { status: 500 });

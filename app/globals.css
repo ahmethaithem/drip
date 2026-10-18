@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "../node_modules/tailwindcss/index.css";
 
 :root { --ink:#181716; --paper:#f4f0e8; --cream:#ebe3d5; --white:#fffdf9; --muted:#6d6860; --line:#d9d1c5; --accent:#8e2430; --accent-soft:#ead5d4; --font-ar:"Alexandria",Tahoma,Arial,sans-serif; --font-ui:"DM Sans",Arial,sans-serif; --font-editorial:"Cormorant Garamond",Georgia,serif; }
 * { box-sizing:border-box; }
