@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -9,9 +7,9 @@ export function SiteFooter() {
           <p>الدفع عند الاستلام · توصيل لكل محافظات مصر</p>
         </div>
         <div className="footer-links">
-          <Link href="/#products">المنتجات</Link>
-          <Link href="/cart">السلة</Link>
-          <Link href="/admin">الإدارة</Link>
+          <a href="/#products">المنتجات</a>
+          <a href="/cart">السلة</a>
+          <a href="/admin">الإدارة</a>
         </div>
         <p className="copyright">© {new Date().getFullYear()} DRIP EGYPT</p>
       </div>

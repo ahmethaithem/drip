@@ -12,7 +12,7 @@ export default function Home() {
           <p>اختار موديلك ومقاسك، وادفع عند الاستلام</p>
           <div className="catalog-note">
             <PackageCheck size={18} aria-hidden="true" />
-            <span>شحن ثابت 100 ج.م لكل الطلب</span>
+            <span>شحن ثابت 100 EGP لكل الطلب</span>
           </div>
         </header>
 

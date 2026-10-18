@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Banknote, MapPin, PackageCheck, Minus, Plus } from "lucide-react";
 import type { Product, Size } from "@/lib/products";
@@ -12,7 +10,6 @@ import { useCart } from "./cart-provider";
 import { Modal } from "./modal";
 
 export function ProductDetailClient({ product }: { product: Product }) {
-  const router = useRouter();
   const { addItem } = useCart();
   const [image, setImage] = useState(product.images[0]);
   const [size, setSize] = useState<Size | null>(null);
@@ -27,7 +24,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
     }
     setError("");
     addItem({ productId: product.id, size, quantity });
-    if (goToCheckout) router.push("/checkout");
+    if (goToCheckout) window.location.assign("/checkout");
     else setAdded(true);
   }
 
@@ -80,7 +77,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
           <div className="product-trust">
             <div><Banknote /><span>الدفع عند الاستلام</span></div>
             <div><MapPin /><span>توصيل لجميع محافظات مصر</span></div>
-            <div><PackageCheck /><span>مصاريف الشحن 100 ج.م للطلب</span></div>
+            <div><PackageCheck /><span>مصاريف الشحن 100 EGP للطلب</span></div>
           </div>
         </div>
       </div>
@@ -91,7 +88,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
           <div><h3>{product.name}</h3><p>المقاس: {size} · الكمية: {quantity}</p><strong>{formatEGP(product.priceEGP * quantity)}</strong></div>
         </div>
         <div className="modal-actions">
-          <Link href="/cart" className="button button-dark">الذهاب إلى السلة</Link>
+          <a href="/cart" className="button button-dark">الذهاب إلى السلة</a>
           <button type="button" className="button button-outline" onClick={() => setAdded(false)}>متابعة التسوق</button>
         </div>
       </Modal>

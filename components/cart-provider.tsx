@@ -80,7 +80,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const clearCart = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setItems([]);
+  }, []);
   const value = useMemo(
     () => ({
       items,

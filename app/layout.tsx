@@ -20,6 +20,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#f4f0e8" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ar" dir="rtl"><body><CartProvider><SiteHeader />{children}<SiteFooter /></CartProvider></body></html>;
+  return <html lang="ar" dir="rtl"><head><link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" /><link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" /></head><body><CartProvider><SiteHeader />{children}<SiteFooter /></CartProvider></body></html>;
 }
 

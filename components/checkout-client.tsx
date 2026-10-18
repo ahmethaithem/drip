@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "./cart-provider";
@@ -16,7 +14,6 @@ type DetailedItem = { product:NonNullable<ReturnType<typeof getProduct>>; produc
 const initialForm: FormData = { fullName:"", primaryPhone:"", secondaryPhone:"", governorate:"", city:"", address:"", buildingNumber:"", floorApartment:"", landmark:"", notes:"", honeypot:"" };
 
 export function CheckoutClient() {
-  const router = useRouter();
   const { items, ready, clearCart } = useCart();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState<Record<string,string>>({});
@@ -47,12 +44,12 @@ export function CheckoutClient() {
       const result = await response.json() as { error?:string; orderNumber?:string; codAmountEGP?:number };
       if (!response.ok || !result.orderNumber) throw new Error(result.error || "تعذر إرسال الطلب.");
       sessionStorage.setItem("drip-egypt-last-order", JSON.stringify({ orderNumber:result.orderNumber, codAmountEGP:result.codAmountEGP }));
-      clearCart(); router.push(`/success?order=${encodeURIComponent(result.orderNumber)}`);
+      clearCart(); window.location.assign(`/success?order=${encodeURIComponent(result.orderNumber)}`);
     } catch (error) { setServerError(error instanceof Error ? error.message : "تعذر إرسال الطلب."); setReview(false); setSubmitting(false); }
   }
 
   if (!ready) return <div className="empty-state"><p>جاري تحميل الطلب…</p></div>;
-  if (!details.length) return <div className="empty-state"><ShoppingBag size={42} /><h2>لا يوجد طلب لإتمامه</h2><p>أضف جاكيتاً إلى السلة أولاً.</p><Link href="/#products" className="button button-dark">تصفح الجاكيتات</Link></div>;
+  if (!details.length) return <div className="empty-state"><ShoppingBag size={42} /><h2>لا يوجد طلب لإتمامه</h2><p>أضف جاكيتاً إلى السلة أولاً.</p><a href="/#products" className="button button-dark">تصفح الجاكيتات</a></div>;
 
   return (
     <>
@@ -80,7 +77,7 @@ export function CheckoutClient() {
       <Modal open={review} title="راجع طلبك" onClose={() => !submitting && setReview(false)}>
         <OrderSummary details={details} totals={totals} />
         <div className="review-address"><h3>بيانات التوصيل</h3><p><b>{form.fullName}</b><br />{form.primaryPhone}<br />{form.governorate}، {form.city}<br />{form.address}</p></div>
-        <p className="cod-review">هتدفع عند الاستلام: <b>{formatEGP(totals.codAmountEGP)}</b></p>
+        <p className="cod-review">هتدفع عند الاستلام: <b dir="ltr">{formatEGP(totals.codAmountEGP)}</b></p>
         <div className="modal-actions"><button className="button button-outline" type="button" disabled={submitting} onClick={() => setReview(false)}>تعديل الطلب</button><button className="button button-dark" type="button" disabled={submitting} onClick={confirm}>{submitting ? "جاري التأكيد…" : "تأكيد الطلب"}</button></div>
       </Modal>
     </>
@@ -92,6 +89,6 @@ function Field({ label, required, error, full, children }: { label:string; requi
 }
 
 function OrderSummary({ details, totals, button=false }: { details:DetailedItem[]; totals:ReturnType<typeof calculateTotals>; button?:boolean }) {
-  return <aside className="summary-card checkout-summary"><h2>ملخص الطلب</h2><div className="summary-items">{details.map(({ product,size,quantity }) => <div className="summary-item" key={`${product.id}:${size}`}><Image src={product.images[0]} alt={product.name} width={62} height={72} /><div><p>{product.name}</p><small>المقاس {size} · الكمية {quantity}</small></div><strong>{formatEGP(product.priceEGP * quantity)}</strong></div>)}</div><div className="summary-row"><span>المنتجات</span><strong>{formatEGP(totals.subtotalEGP)}</strong></div><div className="summary-row"><span>الشحن</span><strong>{formatEGP(totals.shippingFeeEGP)}</strong></div><div className="summary-row total"><span>الإجمالي</span><strong>{formatEGP(totals.codAmountEGP)}</strong></div>{button && <button type="submit" className="button button-dark button-full">مراجعة وتأكيد الطلب</button>}</aside>;
+  return <aside className="summary-card checkout-summary"><h2>ملخص الطلب</h2><div className="summary-items">{details.map(({ product,size,quantity }) => <div className="summary-item" key={`${product.id}:${size}`}><Image src={product.images[0]} alt={product.name} width={62} height={72} /><div><p>{product.name}</p><small>المقاس {size} · الكمية {quantity}</small></div><strong dir="ltr">{formatEGP(product.priceEGP * quantity)}</strong></div>)}</div><div className="summary-row"><span>المنتجات</span><strong dir="ltr">{formatEGP(totals.subtotalEGP)}</strong></div><div className="summary-row"><span>الشحن</span><strong dir="ltr">{formatEGP(totals.shippingFeeEGP)}</strong></div><div className="summary-row total"><span>الإجمالي</span><strong dir="ltr">{formatEGP(totals.codAmountEGP)}</strong></div>{button && <button type="submit" className="button button-dark button-full">مراجعة وتأكيد الطلب</button>}</aside>;
 }
 
