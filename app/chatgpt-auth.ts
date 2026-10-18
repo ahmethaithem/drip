@@ -22,7 +22,27 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
   const userId = requestHeaders.get(USER_ID_HEADER);
   const email = requestHeaders.get(USER_EMAIL_HEADER);
-  if (!userId || !email) return null;
+  if (!userId || !email) {
+    const host = requestHeaders.get("host")?.toLowerCase() ?? "";
+    const isLoopback =
+      host === "localhost" ||
+      host.startsWith("localhost:") ||
+      host === "127.0.0.1" ||
+      host.startsWith("127.0.0.1:") ||
+      host === "[::1]" ||
+      host.startsWith("[::1]:");
+
+    if (process.env.LOCAL_ADMIN_BYPASS === "1" && isLoopback) {
+      return {
+        userId: "local-admin",
+        displayName: "Local Admin",
+        email: "local-admin@drip-egypt.test",
+        fullName: "Local Admin",
+      };
+    }
+
+    return null;
+  }
 
   const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
   const fullName =

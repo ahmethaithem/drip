@@ -40,8 +40,8 @@ export const PRODUCTS: Product[] = [
     description:
       "جاكيت مبطن بطابع سباق جريء وقَصّة مريحة، مناسب للرجال والنساء وللاستخدام اليومي في الشتاء. تفاصيل واضحة وتشطيب أنيق.",
     images: [
-      "/products/bmw/bmw-model.jpg",
       "/products/bmw/bmw-front.jpg",
+      "/products/bmw/bmw-model.jpg",
       "/products/bmw/bmw-front-model.jpg",
       "/products/bmw/bmw-side-model.jpg",
       "/products/bmw/bmw-back-model.jpg",

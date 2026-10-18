@@ -7,7 +7,7 @@ export default function Home() {
     <main className="catalog-home">
       <section className="shell catalog-section" id="products">
         <header className="catalog-intro">
-          <p className="catalog-brand">DRIP EGYPT · BEST SELLERS</p>
+          <p className="catalog-brand">BEST SELLERS</p>
           <h1>الأكثر مبيعاً</h1>
           <p>اختار موديلك ومقاسك، وادفع عند الاستلام</p>
           <div className="catalog-note">

@@ -23,6 +23,8 @@ test("catalog contains exactly the three approved products", async () => {
   const source = await readFile(new URL("../lib/products.ts", import.meta.url), "utf8");
   assert.equal((source.match(/id: \"/g) ?? []).length, 3);
   assert.match(source, /ferrari-black/); assert.match(source, /\"bmw\"/); assert.match(source, /ferrari-pink/);
+  const bmw = source.slice(source.indexOf('id: "bmw"'), source.indexOf('id: "ferrari-pink"'));
+  assert.ok(bmw.indexOf("/products/bmw/bmw-front.jpg") < bmw.indexOf("/products/bmw/bmw-model.jpg"));
 });
 test("governorate catalog contains all 27 entries", async () => {
   const source = await readFile(new URL("../lib/governorates.ts", import.meta.url), "utf8");
